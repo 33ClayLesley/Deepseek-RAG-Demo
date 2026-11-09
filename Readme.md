@@ -31,8 +31,7 @@
 ├── config.py              # Pydantic 配置管理
 ├── requirements.txt       # 锁定版本的依赖清单
 ├── .env                   # 环境变量 (需自行创建)
-├── .dockerignore          # Docker 忽略文件
-├── Dockerfile             # 容器化部署文件
+├── simple_rag.py          # 逐步手敲RAG核心代码训练
 ├── chroma_db/             # 向量数据库持久化目录 (自动生成)
 └── tests/                 # 单元测试目录
     └── test_rag_core.py
@@ -47,7 +46,7 @@
 ### 2.安装依赖
 
 
-```python
+```bash
 # 创建并激活虚拟环境 (可选)
 python -m venv .venv
 source .venv/bin/activate  # Windows 下: .venv\Scripts\activate
@@ -58,7 +57,7 @@ pip install -r requirements.txt
 
 
 ### 3.配置环境变量
-```python
+```env
 LLM_API_KEY=sk-你的API_KEY
 LLM_MODEL=deepseek-chat
 EMBEDDING_MODEL=BAAI/bge-small-zh-v1.5
@@ -71,7 +70,7 @@ pytest tests/ -v
 ```
 
 ### 5.启动应用
-```python
+```bash
 streamlit run app.py
 ```
 
@@ -89,14 +88,14 @@ streamlit run app.py
 
 - 报错 `ModuleNotFoundError: No module named 'langchain.chains'`
   - **原因**：LangChain v1.0+ 进行了包拆分，移除了内置的旧版 Chain。
-  - **解决**：项目已彻底迁移至 ```langchain-classic```和 LCEL 架构，请确保通过 ```requirements.txt```完整安装依赖。
+  - **解决**：项目已彻底迁移至 `langchain-classic`和 LCEL 架构，请确保通过 `requirements.txt`完整安装依赖。
 
 - 报错 `Database is locked` (Windows)
   - **原因**：ChromaDB 在持久化模式下，多线程同时读写引发的文件锁。
-  - **解决**：项目已使用唯一```collection_name```隔离不同文档，且加入了单例缓存机制，通常不会报错。如遇报错，请确保在本地只启动了一个 Streamlit 实例。
+  - **解决**：项目已使用唯一`collection_name`隔离不同文档，且加入了单例缓存机制，通常不会报错。如遇报错，请确保在本地只启动了一个 Streamlit 实例。
 
 - 想替换 Embedding 模型？
-  - **解决**：修改```.env```中的 ```EMBEDDING_MODEL```即可。由于引入了 Hash 去重，更换模型后系统会自动识别为新集合，不会导致数据损坏或冲突，但旧模型生成的数据需要删除```chroma_db```目录重新生成。
+  - **解决**：修改`.env`中的 `EMBEDDING_MODEL`即可。由于引入了 Hash 去重，更换模型后系统会自动识别为新集合，不会导致数据损坏或冲突，但旧模型生成的数据需要删除`chroma_db`目录重新生成。
 
 
 
